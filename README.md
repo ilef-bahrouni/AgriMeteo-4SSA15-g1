@@ -1,38 +1,64 @@
-# AgriMeteo-4SSA15-g1
-# AgriMeteo 🌱
+# Notification Service
 
-## Smart Agriculture Management System
+## 1. Overview
 
-AgriMeteo is a microservices-based application designed to help farmers manage agricultural fields, monitor weather conditions, optimize irrigation, and receive important notifications.
+The Notification Service is a backend microservice of the AgriMeteo platform. Its main responsibility is to manage and send meteorological alerts and irrigation recommendations to farmers.
 
-## Project Architecture
+## 2. Responsibilities
 
-The project follows a microservices architecture.
+- Receive weather alerts from Weather Service.
+- Receive irrigation recommendations from Irrigation Service.
+- Create and manage notifications.
+- Store notification history.
+- Manage notification preferences.
+- Allow users to consult and mark notifications as read.
 
-### Microservices
+## 3. Technologies
 
-| Microservice | Responsibility | Responsible member |
+- Programming Language: Java
+- Framework: Spring Boot
+- Database: PostgreSQL
+- ORM: Spring Data JPA / Hibernate
+- API: REST
+- Communication: REST and asynchronous messaging (proposed).
+
+## 4. Main Components
+
+- Notification
+- NotificationPreference
+- NotificationController
+- NotificationService
+- NotificationRepository
+
+## 5. API Endpoints
+
+| Method | Endpoint | Description |
 |---|---|---|
-| User Service | User registration and authentication | All members |
-| Weather Service | Weather data retrieval and management | Rayen |
-| Field Management Service | Agricultural field and crop management | Mohamed |
-| Irrigation Service | Irrigation needs analysis | Ilef |
-| Notification Service | Weather alerts and irrigation recommendations | Ala |
+| POST | /api/notifications | Create notification |
+| GET | /api/notifications/user/{userId} | Get user notifications |
+| GET | /api/notifications/{id} | Get notification details |
+| PATCH | /api/notifications/{id}/read | Mark as read |
+| DELETE | /api/notifications/{id} | Delete notification |
+| GET | /api/notifications/preferences/{userId} | Get preferences |
+| PUT | /api/notifications/preferences/{userId} | Update preferences |
 
-## Repository Structure
+## 6. Inter-Service Communication
 
-- `Backend/`: Backend microservices.
-- `Frontend/`: Client application.
-- `Documentation/`: Technical documentation, diagrams and presentations.
+### Asynchronous communication
+- Weather Service → Notification Service: WeatherAlertDetected
+- Irrigation Service → Notification Service: IrrigationRecommendationCreated
 
-## Technologies
+### Synchronous communication
+- Notification Service → User Service: Retrieve user information and preferences (if required).
 
-To be completed according to the technologies selected by the team.
+## 7. Database
 
-## Team
+PostgreSQL is used to store:
+- Notifications
+- Notification preferences
 
-AgriMeteo is developed collaboratively by four students as part of the AWD project.
+## 8. Development Status
 
-## Project Status
+Current phase: Architecture and design.
 
-Currently in the design and development phase.
+Implementation: Pending.
