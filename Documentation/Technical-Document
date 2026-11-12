@@ -1,0 +1,442 @@
+AGRIMETEO
+
+Document technique — Validation 1
+Modélisation d'une architecture microservices
+
+
+Équipe : [Noms des membres à compléter]
+Responsable Notification Service : [Votre nom]
+Date : Novembre 2026
+
+
+Document de conception — version de travail à valider par l'équipe
+
+AGRIMETEO  |  DOCUMENT TECHNIQUE — VALIDATION 1
+
+1. Présentation générale
+
+AgriMeteo est une plateforme destinée à accompagner les agriculteurs dans le suivi de leurs parcelles et la prise de décision. Le projet vise à regrouper la gestion des informations agricoles, les données météorologiques, les recommandations liées à l'irrigation et la diffusion de notifications utiles.
+
+1.1 Problématique
+
+Les activités agricoles sont sensibles aux conditions météorologiques et à la disponibilité de l'eau. Les agriculteurs ont besoin d'informations fiables, centralisées et transmises au bon moment. AgriMeteo propose une architecture modulaire afin de séparer les responsabilités métier et de faciliter l'évolution indépendante des fonctionnalités.
+
+1.2 Objectifs
+
+Centraliser les informations relatives aux utilisateurs et aux parcelles.
+
+Consulter et exploiter des informations météorologiques.
+
+Produire des recommandations d'irrigation à partir des données disponibles.
+
+Informer les agriculteurs des alertes et recommandations pertinentes.
+
+Séparer les responsabilités métier au moyen de microservices.
+
+2. Acteurs et fonctionnalités
+
+Acteur
+
+Rôle / fonctionnalités
+
+Agriculteur
+
+Gérer ou consulter ses parcelles, consulter la météo, suivre les recommandations et consulter ses notifications.
+
+Administrateur
+
+Gérer les utilisateurs et assurer une supervision fonctionnelle selon les droits attribués.
+
+Services externes
+
+Fournir des données météorologiques ou d'autres données utiles via des interfaces externes.
+
+Le périmètre exact des fonctionnalités doit être confirmé collectivement par l'équipe. Les fonctionnalités ci-dessus constituent la base fonctionnelle de la modélisation.
+
+3. Découpage en microservices
+
+Le découpage est réalisé par capacité métier (bounded context), et non par écran ou par table. Chaque service est responsable de ses règles métier et de ses données.
+
+Microservice
+
+Responsabilités principales
+
+Données possédées (exemples)
+
+User Service
+
+Identité, comptes et informations des utilisateurs.
+
+Utilisateur, rôles, informations de profil.
+
+Field Management Service
+
+Gestion des parcelles et de leurs caractéristiques.
+
+Parcelle, caractéristiques agricoles.
+
+Weather Service
+
+Collecte, normalisation et exploitation des données météo; détection d'événements météo pertinents.
+
+Mesures météo, prévisions, alertes météo.
+
+Irrigation Service
+
+Évaluation des besoins et production de recommandations d'irrigation.
+
+Recommandations, paramètres de calcul.
+
+Notification Service
+
+Gestion des préférences, création, stockage et consultation des notifications.
+
+Notification, NotificationPreference.
+
+Les noms précis des entités et le périmètre final de chaque service doivent rester cohérents avec les diagrammes et les projets réellement présents dans le dépôt.
+
+4. Principes de données et persistance
+
+Chaque microservice possède sa propre base de données et en est l'unique propriétaire.
+
+Un service ne lit ni ne modifie directement les tables d'un autre service.
+
+Les échanges de données passent par des API ou des événements.
+
+Le Notification Service utilise PostgreSQL pour stocker des données structurées et gérer les relations entre notifications et préférences.
+
+Le champ userId du Notification Service référence fonctionnellement un utilisateur du User Service. Il ne doit pas être une clé étrangère vers une table située dans la base du User Service : les bases restent indépendantes.
+
+Service
+
+Base proposée / à confirmer
+
+User Service
+
+À confirmer par l'équipe
+
+Field Management Service
+
+À confirmer par l'équipe
+
+Weather Service
+
+À confirmer par l'équipe
+
+Irrigation Service
+
+À confirmer par l'équipe
+
+Notification Service
+
+PostgreSQL
+
+5. Architecture technique
+
+La vue cible comprend le frontend, une API Gateway comme point d'entrée, Eureka pour la découverte des services, un Config Server pour la configuration centralisée, Keycloak pour l'authentification et la gestion des identités, les microservices métier, leurs bases dédiées et Docker pour la conteneurisation. Un broker de messages peut être utilisé pour les échanges asynchrones.
+
+Attention : les composants et technologies de cette section doivent être vérifiés par rapport à la stack imposée et à la configuration réellement choisie par l'équipe. Un composant représenté comme cible ou proposé ne doit pas être présenté comme déjà déployé s'il ne l'est pas.
+
+5.1 Rôle des composants
+
+Composant
+
+Rôle
+
+Frontend
+
+Interface utilisateur et consommation des API.
+
+API Gateway
+
+Point d'entrée, routage des requêtes vers les services.
+
+Eureka
+
+Registre permettant la découverte dynamique des services.
+
+Config Server
+
+Centralisation de la configuration des applications.
+
+Keycloak
+
+Authentification et gestion des identités/jetons.
+
+Broker de messages
+
+Transport des événements asynchrones entre producteurs et consommateurs.
+
+Docker
+
+Packaging et exécution des composants dans des conteneurs.
+
+6. Communication inter-microservices
+
+6.1 Communication synchrone
+
+La communication synchrone repose sur une requête suivie d'une réponse, généralement via REST et éventuellement OpenFeign. Exemple prévu : le Notification Service peut demander au User Service des informations utilisateur nécessaires à un traitement. L'appelant attend la réponse; ce mode est adapté lorsqu'une réponse immédiate est requise.
+
+6.2 Communication asynchrone
+
+La communication asynchrone repose sur la publication et la consommation d'événements via un broker. Le producteur publie un fait métier sans attendre la fin du traitement par le consommateur. Ce mode limite le couplage temporel et permet au consommateur de traiter l'événement indépendamment.
+
+Producteur
+
+Événement proposé
+
+Consommateur
+
+But
+
+Weather Service
+
+WeatherAlertDetected
+
+Notification Service
+
+Déclencher une notification météo.
+
+Irrigation Service
+
+IrrigationRecommendationCreated
+
+Notification Service
+
+Informer l'agriculteur d'une recommandation.
+
+6.3 Gestion des indisponibilités
+
+Prévoir des timeouts et une gestion explicite des erreurs pour les appels synchrones.
+
+Pour les événements, envisager une file durable/persistante, des tentatives de retry et une dead-letter queue (DLQ).
+
+Rendre le traitement idempotent lorsque cela est nécessaire afin d'éviter les doublons lors de la re-livraison d'un événement.
+
+Ces mécanismes sont des choix de conception à implémenter et tester; ils ne sont pas considérés comme déjà disponibles sans preuve dans le code et la configuration.
+
+7. Conception détaillée — Notification Service
+
+7.1 Responsabilités et limites
+
+Le Notification Service reçoit les alertes et recommandations produites par d'autres services, applique les préférences de l'utilisateur, enregistre les notifications et expose des opérations de consultation et de gestion. Il ne calcule ni les prévisions météorologiques ni les besoins d'irrigation.
+
+7.2 Modèle de données
+
+Entité
+
+Attributs proposés
+
+Description
+
+Notification
+
+id, userId, title, message, type, status, createdAt
+
+Représente une notification destinée à un utilisateur.
+
+NotificationPreference
+
+id, userId, weatherAlerts, irrigationAlerts, channel
+
+Définit les catégories de notifications et le canal préféré.
+
+Types proposés : WEATHER_ALERT et IRRIGATION_RECOMMENDATION. Statuts proposés : UNREAD et READ. Les attributs peuvent être ajustés selon les conventions de l'équipe.
+
+7.3 Architecture interne
+
+L'organisation suit une architecture en couches : NotificationController reçoit les requêtes HTTP; NotificationService applique les règles métier; NotificationRepository et NotificationPreferenceRepository accèdent aux entités via Spring Data JPA/Hibernate; PostgreSQL assure la persistance. Des composants dédiés peuvent gérer les événements entrants, les DTO et les exceptions.
+
+7.4 API REST prévue
+
+Méthode
+
+URI
+
+Description
+
+Réponse nominale
+
+POST
+
+/api/notifications
+
+Créer une notification
+
+201 Created
+
+GET
+
+/api/notifications/user/{userId}
+
+Lister les notifications d'un utilisateur
+
+200 OK
+
+GET
+
+/api/notifications/{id}
+
+Consulter une notification
+
+200 OK
+
+PATCH
+
+/api/notifications/{id}/read
+
+Marquer une notification comme lue
+
+200 OK
+
+DELETE
+
+/api/notifications/{id}
+
+Supprimer une notification
+
+204 No Content
+
+GET
+
+/api/notifications/preferences/{userId}
+
+Consulter les préférences
+
+200 OK
+
+PUT
+
+/api/notifications/preferences/{userId}
+
+Créer ou mettre à jour les préférences
+
+200 OK
+
+Codes d'erreur à prévoir : 400 Bad Request (requête invalide), 401 Unauthorized (non authentifié), 403 Forbidden (accès interdit), 404 Not Found (ressource absente) et 500 Internal Server Error (erreur serveur). Les règles d'autorisation doivent être cohérentes avec l'identité authentifiée.
+
+8. Scénario de séquence : alerte météorologique
+
+Le Weather Service détecte une condition météorologique importante.
+
+Il publie l'événement WeatherAlertDetected dans le broker.
+
+Le Notification Service consomme l'événement et extrait les données utiles (par exemple userId, type d'alerte, titre, message et date).
+
+Si des informations complémentaires sont nécessaires, le Notification Service peut interroger le User Service via REST/OpenFeign.
+
+Le Notification Service consulte les préférences enregistrées dans sa propre base PostgreSQL.
+
+Si la catégorie est activée, il crée et enregistre la notification.
+
+La notification est ensuite rendue disponible à l'agriculteur via le canal retenu par le projet.
+
+Le canal de livraison (in-app, e-mail ou push) reste à confirmer par l'équipe. Le diagramme doit distinguer l'enregistrement en base de la livraison effective à l'utilisateur.
+
+9. Organisation du dépôt Git
+
+Structure recommandée et attendue pour la validation :
+
+Backend/ : un projet initialisé pour chaque microservice.
+
+Frontend/ : application cliente.
+
+Documentation/Presentation/ : support de présentation.
+
+Documentation/Diagrams/ : diagrammes d'architecture, de classes et de séquence.
+
+README.md : présentation générale, membres, architecture, structure et instructions de lancement.
+
+Chaque membre doit contribuer avec des commits identifiables. Le dépôt doit être public et accessible. Les informations de lancement, variables d'environnement et dépendances doivent être documentées; aucun mot de passe ou secret ne doit être commité.
+
+10. État d'avancement et prochaines étapes
+
+Élément
+
+État à renseigner par l'équipe
+
+Modélisation et diagrammes
+
+À vérifier dans Documentation/Diagrams.
+
+Projets microservices initialisés
+
+À vérifier dans Backend/.
+
+Compilation et démarrage des projets
+
+À tester individuellement.
+
+Communication inter-services
+
+Conception définie; intégration à réaliser/valider.
+
+Déploiement Docker et composants d'infrastructure
+
+À confirmer selon l'environnement de l'équipe.
+
+Développement métier
+
+Étape suivante après validation de la conception.
+
+La validation 1 porte prioritairement sur la cohérence de la conception, la propriété des données, les interactions et la préparation des projets. La logique métier complète n'est pas attendue à ce stade.
+
+11. Glossaire
+
+Terme
+
+Définition courte
+
+Microservice
+
+Service autonome centré sur une capacité métier.
+
+Bounded context
+
+Périmètre métier clairement délimité avec son vocabulaire et ses responsabilités.
+
+API Gateway
+
+Point d'entrée qui route les requêtes vers les services.
+
+Eureka
+
+Registre de découverte des services.
+
+OpenFeign
+
+Client déclaratif facilitant les appels HTTP entre services Spring.
+
+Événement
+
+Message représentant un fait métier qui s'est produit.
+
+DLQ
+
+Dead-letter queue : file destinée aux messages qui échouent après les tentatives prévues.
+
+Idempotence
+
+Propriété permettant de répéter un traitement sans produire plusieurs effets indésirables.
+
+Annexe A — Présentation orale courte du Notification Service
+
+« Notre Notification Service est responsable de la gestion des notifications destinées aux agriculteurs. Il reçoit des événements provenant du Weather Service et de l'Irrigation Service, vérifie les préférences de l'utilisateur, puis enregistre les notifications dans sa propre base PostgreSQL. Il expose également des API REST pour consulter les notifications, les marquer comme lues et gérer les préférences. Nous utilisons une communication asynchrone pour les alertes et recommandations afin de réduire le couplage entre les microservices. »
+
+Annexe B — Points à confirmer avant le dépôt
+
+Remplacer les champs [Noms des membres] et [Votre nom].
+
+Confirmer le nom officiel de chaque microservice et sa responsabilité exacte.
+
+Confirmer les bases de données attribuées aux autres services.
+
+Confirmer le broker retenu et les mécanismes réellement configurés.
+
+Vérifier la stack imposée pour Gateway, Eureka, Config Server, Keycloak et Docker.
+
+Aligner les diagrammes, les endpoints, les noms d'événements et le code du dépôt.
+
+Ne pas présenter comme implémenté un composant qui est seulement prévu.
+
+Document de conception — version de travail à valider par l'équipe
