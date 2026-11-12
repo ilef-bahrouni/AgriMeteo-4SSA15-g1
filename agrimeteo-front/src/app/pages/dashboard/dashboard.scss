@@ -1,0 +1,159 @@
+.dashboard {
+  color: #244533;
+}
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.welcome h1 {
+  font-size: 25px;
+  margin: 0 0 8px;
+}
+
+.welcome p,
+.description {
+  color: #89978e;
+  font-size: 13px;
+}
+
+.status {
+  background: #e3f5e8;
+  color: #21834a;
+  padding: 9px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.statistics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 3px 12px #163b2b0b;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+
+.green { background: #e4f5e9; }
+.blue { background: #e5f0ff; }
+.orange { background: #fff1df; }
+.purple { background: #f0eaff; }
+
+.stat-card p {
+  margin: 0 0 8px;
+  color: #89978e;
+  font-size: 12px;
+}
+
+.stat-card h2 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 3px 12px #163b2b0b;
+  overflow-x: auto;
+}
+
+.panel h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+th, td {
+  padding: 15px 10px;
+  border-bottom: 1px solid #edf1ed;
+  white-space: nowrap;
+}
+
+th {
+  color: #849187;
+  font-weight: 600;
+}
+
+.completed, .progress, .planned {
+  padding: 6px 9px;
+  border-radius: 15px;
+  font-size: 10px;
+}
+
+.completed { background: #e2f5e8; color: #21834a; }
+.progress { background: #fff1d9; color: #bd791b; }
+.planned { background: #e8efff; color: #476cc4; }
+
+.recommendation {
+  padding: 15px 0;
+  border-bottom: 1px solid #edf1ed;
+}
+
+.recommendation strong {
+  font-size: 13px;
+}
+
+.recommendation p {
+  color: #89978e;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+  .statistics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome {
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column;
+  }
+}

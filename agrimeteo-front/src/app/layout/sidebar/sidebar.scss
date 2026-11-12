@@ -1,0 +1,84 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #123d2b;
+  color: white;
+  padding: 25px 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 45px;
+}
+
+.brand-icon {
+  font-size: 32px;
+}
+
+.brand h2 {
+  font-size: 21px;
+  margin: 0;
+}
+
+.brand span {
+  font-size: 9px;
+  color: #a8c8b2;
+  letter-spacing: 1.5px;
+}
+
+.menu-title {
+  font-size: 10px;
+  color: #a8c8b2;
+  letter-spacing: 1px;
+  margin: 0 0 15px 10px;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 12px;
+  color: #d8e8dd;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+  background: #26734c;
+  color: white;
+}
+
+nav a span {
+  font-size: 17px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #d8e8dd;
+  font-size: 12px;
+}
+
+.sidebar-footer small {
+  color: #a8c8b2;
+}

@@ -1,0 +1,88 @@
+<div class="dashboard">
+
+  <div class="welcome">
+    <div>
+      <h1>Dashboard Overview 🌱</h1>
+      <p>Monitor and manage your irrigation activities.</p>
+    </div>
+
+    <span class="status">● System Online</span>
+  </div>
+
+  <div class="statistics">
+    @for (item of statistics; track item.title) {
+      <div class="stat-card">
+        <div class="stat-icon" [class]="item.color">
+          {{ item.icon }}
+        </div>
+
+        <div>
+          <p>{{ item.title }}</p>
+          <h2>{{ item.value }}</h2>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="content-grid">
+
+    <div class="panel">
+      <h3>Recent Irrigation Activity</h3>
+      <p class="description">Overview of recent irrigation operations</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Date</th>
+            <th>Water Quantity</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Field A01</td>
+            <td>12/11/2026</td>
+            <td>250 L</td>
+            <td><span class="completed">Completed</span></td>
+          </tr>
+
+          <tr>
+            <td>Field B02</td>
+            <td>12/11/2026</td>
+            <td>180 L</td>
+            <td><span class="progress">In Progress</span></td>
+          </tr>
+
+          <tr>
+            <td>Field C03</td>
+            <td>11/11/2026</td>
+            <td>300 L</td>
+            <td><span class="planned">Planned</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel recommendations">
+      <h3>Smart Recommendations 💡</h3>
+
+      <div class="recommendation">
+        <strong>Field A01</strong>
+        <p>Check soil moisture before the next irrigation cycle.</p>
+      </div>
+
+      <div class="recommendation">
+        <strong>Field B02</strong>
+        <p>Consider adjusting the irrigation schedule.</p>
+      </div>
+
+      <div class="recommendation">
+        <strong>Field C03</strong>
+        <p>Monitor water consumption this week.</p>
+      </div>
+    </div>
+
+  </div>
+</div>

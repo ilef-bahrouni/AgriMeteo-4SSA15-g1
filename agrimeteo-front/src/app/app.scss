@@ -1,0 +1,25 @@
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f8f5;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  margin-left: 250px;
+}
+
+.page-content {
+  padding: 28px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}
